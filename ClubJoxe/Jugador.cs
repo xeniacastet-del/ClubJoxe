@@ -30,5 +30,11 @@ namespace ClubJoxe
             this.Posicion = posicion;
 
         }
+
+        // Método para mostrar la información del jugador
+        public void MostrarInformacion()
+        {
+            Console.WriteLine($"\tNombre: {this.Nombre}, Dorsal: {this.Dorsal}, Posición: {this.Posicion}");
+        }
     }
 }
