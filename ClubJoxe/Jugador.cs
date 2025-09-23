@@ -23,10 +23,10 @@ namespace ClubJoxe
         public string Nombre { get { return nombre; } set { nombre = value; } }
 
         public ePosicion Posicion { get { return posicion; } private set { posicion = value; } }
-        public Jugador( int dorsal, string nombre, ePosicion posicion) 
+        public Jugador(string nombre, int dorsal, ePosicion posicion) 
         {
-            this.Dorsal = dorsal;
             this.Nombre = nombre;
+            this.Dorsal = dorsal;
             this.Posicion = posicion;
 
         }

@@ -8,6 +8,10 @@ namespace ClubJoxe
 {
     internal class Program
     {
+
+        // Lista estática para almacenar todos los equipos
+        private static List<Equipo> listaEquipos = new List<Equipo>();
+
         static void Main(string[] args)
         {
             bool salir = false;
@@ -21,13 +25,13 @@ namespace ClubJoxe
                 switch (opcion)
                 {
                     case "1":
-                        //Metodo crear equipo
+                        CrearEquipo();
                         break;
                     case "2":
-                        //Metodo listar equipos
+                        ListarEquipos();    
                         break;
                     case "3":
-                        //Metodo listar jugadores de equipo
+                        VerJugadoresDeEquipo();
                         break;
                     case "4":
                         Console.WriteLine("¡Gracias por usar el programa!");
@@ -50,9 +54,102 @@ namespace ClubJoxe
             Console.Write("Selecciona una opción: ");
         }
 
-        
+        private static void CrearEquipo()
+        {
+            Console.Clear();
+            Console.Write("Introduce el nombre del nuevo equipo: ");
+            string nombreEquipo = Console.ReadLine();
 
-            
+            // Verificamos si ya existe un equipo con ese nombre
+            if (listaEquipos.Any(e => e.NombreEquipo.Equals(nombreEquipo, StringComparison.OrdinalIgnoreCase)))
+            {
+                Console.WriteLine("Ya existe un equipo con este nombre. Inténtalo de nuevo.");
+                return;
+            }
 
+            try
+            {
+                Equipo nuevoEquipo = new Equipo(nombreEquipo);
+                listaEquipos.Add(nuevoEquipo);
+                Console.WriteLine($"\nEquipo '{nombreEquipo}' creado con éxito.");
+
+                // Pedimos los jugadores
+                Console.Write("¿Cuántos jugadores quieres agregar a este equipo?: ");
+                int numJugadores;
+                while (!int.TryParse(Console.ReadLine(), out numJugadores) || numJugadores < 0)
+                {
+                    Console.Write("Número no válido. Por favor, introduce un número positivo: ");
+                }
+
+                for (int i = 0; i < numJugadores; i++)
+                {
+                    Console.WriteLine($"\n--- Jugador {i + 1} ---");
+                    Console.Write("Nombre: ");
+                    string nombre = Console.ReadLine();
+
+                    Console.Write("Dorsal: ");
+                    int dorsal;
+                    while (!int.TryParse(Console.ReadLine(), out dorsal) || dorsal <= 0)
+                    {
+                        Console.Write("Dorsal no válido. Introduce un número positivo: ");
+                    }
+
+                    Console.WriteLine("Posición (P, DF, MC, D): ");
+                    string posString = Console.ReadLine().ToUpper();
+                    ePosicion posicion;
+
+                    while (!Enum.TryParse(posString, out posicion))
+                    {
+                        Console.Write("Posición no válida. Introduce P, DF, MC o D: ");
+                        posString = Console.ReadLine().ToUpper();
+                    }
+
+                    Jugador nuevoJugador = new Jugador(nombre, dorsal, posicion);
+                    nuevoEquipo.AgregarJugador(nuevoJugador);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error al crear el equipo: {ex.Message}");
+            }
+        }
+
+        private static void ListarEquipos()
+        {
+            Console.Clear();
+            Console.WriteLine("--- Lista de Equipos Creados ---");
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos creados aún.");
+                return;
+            }
+
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {listaEquipos[i].NombreEquipo}");
+            }
+        }
+
+        private static void VerJugadoresDeEquipo()
+        {
+            Console.Clear();
+            ListarEquipos();
+            Console.Write("Introduce el nombre del equipo para ver sus jugadores: ");
+            string nombreEquipo = Console.ReadLine();
+
+            // Buscamos el equipo en la lista
+            var equipo = listaEquipos.FirstOrDefault(e => e.NombreEquipo.Equals(nombreEquipo, StringComparison.OrdinalIgnoreCase));
+
+            if (equipo != null)
+            {
+                equipo.ListarJugadores();
+            }
+            else
+            {
+                Console.WriteLine($"El equipo '{nombreEquipo}' no fue encontrado.");
+            }
+        }
     }
+
 }
+
