@@ -27,31 +27,40 @@ namespace ClubJoxe
                     case "1":
                         CrearEquipo();
                         break;
+
                     case "2":
-                        ListarEquipos();    
+                        ListarEquipos();
                         break;
+
                     case "3":
                         VerJugadoresDeEquipo();
                         break;
+
                     case "4":
+                        JugarPartido();
+                        break;
+
+                    case "5":
                         Console.WriteLine("¡Gracias por usar el programa!");
                         salir = true;
                         break;
+
                     default:
                         Console.WriteLine("Opción no válida. Por favor, intenta de nuevo.");
                         break;
                 }
+
             }
         }
 
         static void MostrarMenu()
         {
-            Console.WriteLine("\n--- Menú Principal ---");
             Console.WriteLine("1. Crear un nuevo equipo");
             Console.WriteLine("2. Listar todos los equipos");
             Console.WriteLine("3. Ver jugadores de un equipo");
-            Console.WriteLine("4. Salir");
-            Console.Write("Selecciona una opción: ");
+            Console.WriteLine("4. Jugar partido");    
+            Console.WriteLine("5. Salir");              
+
         }
 
         private static void CrearEquipo()
@@ -149,6 +158,23 @@ namespace ClubJoxe
                 Console.WriteLine($"El equipo '{nombreEquipo}' no fue encontrado.");
             }
         }
+        private static void JugarPartido()
+        {
+            Console.Clear();
+
+            if (listaEquipos.Count < 2)
+            {
+                Console.WriteLine("Necesitas al menos 2 equipos para jugar un partido.");
+                return;
+            }
+
+            var partido = new Partido(listaEquipos);
+            if (!partido.crearParido())
+                return;
+
+            partido.ResultadoFinal();
+        }
+
     }
 
 }
