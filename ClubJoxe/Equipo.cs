@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClubJoxe
 {
-    internal class Equipo
+    public class Equipo
     {
         // Atributos
         public string NombreEquipo { get; private set; }
@@ -15,11 +12,15 @@ namespace ClubJoxe
         // Constructor
         public Equipo(string nombreEquipo)
         {
+            if (string.IsNullOrWhiteSpace(nombreEquipo))
+            {
+                throw new ArgumentException("El nombre del equipo es obligatorio.");
+            }
             this.NombreEquipo = nombreEquipo;
             this.jugadores = new List<Jugador>();
         }
 
-        // Método para agregar un jugador
+        // Método principal para agregar un jugador desde el menú
         public void AgregarJugador(Jugador nuevoJugador)
         {
             this.jugadores.Add(nuevoJugador);
@@ -40,6 +41,18 @@ namespace ClubJoxe
             {
                 jugador.MostrarInformacion();
             }
+        }
+
+        // Metodos requeridos para la persistencia
+        // Añade los jugadores creados al fichero y los del fichero cargados
+        public List<Jugador> GetJugadores()
+        {
+            return this.jugadores;
+        }
+
+        public void AgregarJugadorAlCargar(Jugador jugador)
+        {
+            this.jugadores.Add(jugador);
         }
     }
 }

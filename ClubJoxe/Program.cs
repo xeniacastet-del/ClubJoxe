@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClubJoxe
 {
     internal class Program
     {
-
-        // Lista estática para almacenar todos los equipos
-        private static List<Equipo> listaEquipos = new List<Equipo>();
+        // Carga de Datos al iniciar (usa Persistencia para leer equiposLiga.txt)
+        private static List<Equipo> listaEquipos = Persistencia.CargarEquipos();
 
         static void Main(string[] args)
         {
             bool salir = false;
+
+            // Instancia del gestor de partidos, recibe la lista cargada
+            var gestorPartidos = new Partido(listaEquipos);
 
             while (!salir)
             {
@@ -27,41 +27,52 @@ namespace ClubJoxe
                     case "1":
                         CrearEquipo();
                         break;
-
                     case "2":
                         ListarEquipos();
                         break;
-
                     case "3":
                         VerJugadoresDeEquipo();
                         break;
-
                     case "4":
-                        JugarPartido();
+                        // Jugar partido
+                        JugarPartido(gestorPartidos);
+                        Pausa();
+                        Console.Clear();
                         break;
-
                     case "5":
+                        // Guardar datos antes de salir
+                        Console.WriteLine("Guardando datos antes de salir...");
+                        Persistencia.GuardarEquipos(listaEquipos);
                         Console.WriteLine("¡Gracias por usar el programa!");
                         salir = true;
                         break;
-
                     default:
                         Console.WriteLine("Opción no válida. Por favor, intenta de nuevo.");
                         break;
                 }
-
             }
         }
 
+        // Métodos de Menú y Utilidad
+
         static void MostrarMenu()
         {
+            Console.WriteLine("\n--- Menú Principal ---");
             Console.WriteLine("1. Crear un nuevo equipo");
             Console.WriteLine("2. Listar todos los equipos");
             Console.WriteLine("3. Ver jugadores de un equipo");
-            Console.WriteLine("4. Jugar partido");    
-            Console.WriteLine("5. Salir");              
-
+            Console.WriteLine("4. Jugar partido");
+            Console.WriteLine("5. Salir (y Guardar datos)");
+            Console.Write("Selecciona una opción: ");
         }
+
+        private static void Pausa()
+        {
+            Console.WriteLine("\nPresiona cualquier tecla para continuar...");
+            Console.ReadKey(true);
+        }
+
+        // Lógica de Equipos y Jugadores
 
         private static void CrearEquipo()
         {
@@ -69,10 +80,11 @@ namespace ClubJoxe
             Console.Write("Introduce el nombre del nuevo equipo: ");
             string nombreEquipo = Console.ReadLine();
 
-            // Verificamos si ya existe un equipo con ese nombre
             if (listaEquipos.Any(e => e.NombreEquipo.Equals(nombreEquipo, StringComparison.OrdinalIgnoreCase)))
             {
                 Console.WriteLine("Ya existe un equipo con este nombre. Inténtalo de nuevo.");
+                Pausa();
+                Console.Clear();
                 return;
             }
 
@@ -82,12 +94,12 @@ namespace ClubJoxe
                 listaEquipos.Add(nuevoEquipo);
                 Console.WriteLine($"\nEquipo '{nombreEquipo}' creado con éxito.");
 
-                // Pedimos los jugadores
                 Console.Write("¿Cuántos jugadores quieres agregar a este equipo?: ");
                 int numJugadores;
-                while (!int.TryParse(Console.ReadLine(), out numJugadores) || numJugadores < 0)
+                if (!int.TryParse(Console.ReadLine(), out numJugadores) || numJugadores < 0)
                 {
-                    Console.Write("Número no válido. Por favor, introduce un número positivo: ");
+                    numJugadores = 0;
+                    Console.WriteLine("Número no válido. Se agregarán 0 jugadores.");
                 }
 
                 for (int i = 0; i < numJugadores; i++)
@@ -103,11 +115,12 @@ namespace ClubJoxe
                         Console.Write("Dorsal no válido. Introduce un número positivo: ");
                     }
 
-                    Console.WriteLine("Posición (P, DF, MC, D): ");
+                    Console.Write("Posición (P, DF, MC, D): ");
                     string posString = Console.ReadLine().ToUpper();
+
                     ePosicion posicion;
 
-                    while (!Enum.TryParse(posString, out posicion))
+                    while (!Enum.TryParse(posString, true, out posicion))
                     {
                         Console.Write("Posición no válida. Introduce P, DF, MC o D: ");
                         posString = Console.ReadLine().ToUpper();
@@ -121,11 +134,54 @@ namespace ClubJoxe
             {
                 Console.WriteLine($"Error al crear el equipo: {ex.Message}");
             }
+            Pausa();
+            Console.Clear();
         }
 
         private static void ListarEquipos()
         {
             Console.Clear();
+            Console.WriteLine("--- Lista de Equipos Creados ---");
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos creados aún.");
+                Pausa();
+                Console.Clear();
+                return;
+            }
+
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {listaEquipos[i].NombreEquipo}");
+            }
+            Pausa();
+            Console.Clear();
+        }
+
+        private static void VerJugadoresDeEquipo()
+        {
+            Console.Clear();
+            ListarEquiposParaBusqueda();
+            Console.Write("\nIntroduce el nombre del equipo para ver sus jugadores: ");
+            string nombreEquipo = Console.ReadLine();
+
+            var equipo = listaEquipos.FirstOrDefault(e => e.NombreEquipo.Equals(nombreEquipo, StringComparison.OrdinalIgnoreCase));
+
+            if (equipo != null)
+            {
+                equipo.ListarJugadores();
+            }
+            else
+            {
+                Console.WriteLine($"El equipo '{nombreEquipo}' no fue encontrado.");
+            }
+            Pausa();
+            Console.Clear();
+        }
+
+        // Versión para mostrar la lista sin pausa ni clear
+        private static void ListarEquiposParaBusqueda()
+        {
             Console.WriteLine("--- Lista de Equipos Creados ---");
             if (listaEquipos.Count == 0)
             {
@@ -139,26 +195,9 @@ namespace ClubJoxe
             }
         }
 
-        private static void VerJugadoresDeEquipo()
-        {
-            Console.Clear();
-            ListarEquipos();
-            Console.Write("Introduce el nombre del equipo para ver sus jugadores: ");
-            string nombreEquipo = Console.ReadLine();
+        // Lógica de Partidos
 
-            // Buscamos el equipo en la lista
-            var equipo = listaEquipos.FirstOrDefault(e => e.NombreEquipo.Equals(nombreEquipo, StringComparison.OrdinalIgnoreCase));
-
-            if (equipo != null)
-            {
-                equipo.ListarJugadores();
-            }
-            else
-            {
-                Console.WriteLine($"El equipo '{nombreEquipo}' no fue encontrado.");
-            }
-        }
-        private static void JugarPartido()
+        private static void JugarPartido(Partido gestorPartidos)
         {
             Console.Clear();
 
@@ -168,14 +207,11 @@ namespace ClubJoxe
                 return;
             }
 
-            var partido = new Partido(listaEquipos);
-            if (!partido.crearParido())
-                return;
-
-            partido.ResultadoFinal();
+            if (gestorPartidos.CrearPartido())
+            {
+                gestorPartidos.ResultadoFinal();
+            }
         }
-
     }
-
 }
 

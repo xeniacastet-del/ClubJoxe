@@ -13,7 +13,7 @@ namespace ClubJoxe
         MC,
         D
     }
-    internal class Jugador
+    public class Jugador
     {
         private int dorsal;
         private string nombre;
