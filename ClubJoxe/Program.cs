@@ -40,6 +40,11 @@ namespace ClubJoxe
                         Console.Clear();
                         break;
                     case "5":
+                        ClasificacionEquipos();
+                        Pausa();
+                        Console.Clear();
+                        break;
+                    case "6":
                         // Guardar datos antes de salir
                         Console.WriteLine("Guardando datos antes de salir...");
                         Persistencia.GuardarEquipos(listaEquipos);
@@ -62,6 +67,7 @@ namespace ClubJoxe
             Console.WriteLine("2. Listar todos los equipos");
             Console.WriteLine("3. Ver jugadores de un equipo");
             Console.WriteLine("4. Jugar partido");
+            Console.WriteLine("5. Clasificacion de los equipos");
             Console.WriteLine("5. Salir (y Guardar datos)");
             Console.Write("Selecciona una opción: ");
         }
@@ -211,6 +217,49 @@ namespace ClubJoxe
             {
                 gestorPartidos.ResultadoFinal();
             }
+        }
+
+        //Metodo para mostrar la clasificacion de los equipos (no se guarda en el fichero, solo es informacion)
+        private static void ClasificacionEquipos()
+        {
+            Console.Clear();
+            Console.WriteLine("--- CLASIFICACIÓN DE EQUIPOS ---");
+
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos creados ni estadísticas para mostrar.");
+                return;
+            }
+
+            // define el orden que se posiciona la informacion dependiendo de
+            // los puntos, goles a favor, goles en contra y luego muestra la lista
+            var clasificacion = listaEquipos
+                .OrderByDescending(e => e.Puntos) 
+                .ThenByDescending(e => e.GolesFavor) 
+                .ThenBy(e => e.GolesContra) 
+                .ToList();
+
+            // forma de mostrar la informacion "bonita", el primer numero referencia a la variable
+            // y el segundo a los caracteres que ocupa, el - define la alineacion
+            Console.WriteLine("----------------------------------------------------------------");
+            Console.WriteLine("{0,-20} | {1,-3} | {2,-3} | {3,-3} | {4,-3} | {5,-3}",
+                              "EQUIPO", "PJ", "PTS", "GF", "GC", "DIF");
+            Console.WriteLine("----------------------------------------------------------------");
+
+            
+            foreach (var equipo in clasificacion)
+            {
+                int diferencia = equipo.GolesFavor - equipo.GolesContra; 
+
+                Console.WriteLine("{0,-20} | {1,-3} | {2,-3} | {3,-3} | {4,-3} | {5,-3}",
+                                  equipo.NombreEquipo,
+                                  equipo.PartidosJugados,
+                                  equipo.Puntos,
+                                  equipo.GolesFavor,
+                                  equipo.GolesContra,
+                                  diferencia); 
+            }
+            Console.WriteLine("----------------------------------------------------------------");
         }
     }
 }
