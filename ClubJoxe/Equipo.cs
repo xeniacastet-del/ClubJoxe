@@ -9,6 +9,12 @@ namespace ClubJoxe
         public string NombreEquipo { get; private set; }
         private List<Jugador> jugadores;
 
+        // Atributos para la clasificacion de equipos
+        public int PartidosJugados { get; private set; } = 0;
+        public int Puntos { get; private set; } = 0;
+        public int GolesFavor { get; private set; } = 0;
+        public int GolesContra { get; private set; } = 0;
+
         // Constructor
         public Equipo(string nombreEquipo)
         {
@@ -41,6 +47,24 @@ namespace ClubJoxe
             {
                 jugador.MostrarInformacion();
             }
+        }
+
+        // Método para actualizar las estadisticas de equipo para la clasificacion 
+        public void ActualizarEstadisticas(int golesEquipo, int golesRival)
+        {
+            this.PartidosJugados++;
+            this.GolesFavor += golesEquipo;
+            this.GolesContra += golesRival;
+
+            if (golesEquipo > golesRival)
+            {
+                this.Puntos += 3; // Gana
+            }
+            else if (golesEquipo == golesRival)
+            {
+                this.Puntos += 1; // Empata
+            }
+            // Si pierde, se suman 0 puntos (no se necesita 'else')
         }
 
         // Metodos requeridos para la persistencia
