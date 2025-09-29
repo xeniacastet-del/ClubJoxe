@@ -68,7 +68,7 @@ namespace ClubJoxe
             Console.WriteLine("3. Ver jugadores de un equipo");
             Console.WriteLine("4. Jugar partido");
             Console.WriteLine("5. Clasificacion de los equipos");
-            Console.WriteLine("5. Salir (y Guardar datos)");
+            Console.WriteLine("6. Salir (y Guardar datos)");
             Console.Write("Selecciona una opción: ");
         }
 
