@@ -9,6 +9,7 @@ namespace ClubJoxe
     {
         // Si la ruta esta en otro sitio modificar la RutaArchivo donde se guarda en cada ordenador
         // RUTA JORDI ORDENADOR MATI: @"C:\Users\Mati\ficherosNET\equiposLiga.txt"
+        // RUTA XENIA ORDENADOR MATI: @"C:\Users\Mati\ficherosNET\equiposLiga.txt"
         private const string RutaArchivo = @"C:\Users\Mati\ficherosNET\equiposLiga.txt";
 
         //Caracter que delimita los valores del archivo de texto para que el programa lo pueda leer
