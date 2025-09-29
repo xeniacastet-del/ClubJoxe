@@ -61,6 +61,9 @@ namespace ClubJoxe
                 Console.WriteLine($"Ganador: {Visitante.NombreEquipo}");
             else
                 Console.WriteLine("Resultado: EMPATE");
+
+            Local.ActualizarEstadisticas(GolesLocal, GolesVisitante);
+            Visitante.ActualizarEstadisticas(GolesVisitante, GolesLocal);
         }
     }
 }

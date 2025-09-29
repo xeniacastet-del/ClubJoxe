@@ -58,13 +58,13 @@ namespace ClubJoxe
 
             if (golesEquipo > golesRival)
             {
-                this.Puntos += 3; // Gana
+                this.Puntos += 3; 
             }
             else if (golesEquipo == golesRival)
             {
-                this.Puntos += 1; // Empata
+                this.Puntos += 1; 
             }
-            // Si pierde, se suman 0 puntos (no se necesita 'else')
+            
         }
 
         // Metodos requeridos para la persistencia
